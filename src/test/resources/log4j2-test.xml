@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Appenders>
+        <Gelf4j2 name="syslogtest" hostname="localhost" type="tcp">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <KeyValuePair key="additionalField1" value="additional value 1"/>
+        </Gelf4j2>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="syslogtest"/>
+        </Root>
+    </Loggers>
+</Configuration>
