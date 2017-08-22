@@ -121,7 +121,7 @@ public class Log4j2PayloadTransformer {
     }
 
     try {
-      payload.setHost(InetAddress.getLocalHost().getHostAddress());
+      payload.setHost(InetAddress.getLocalHost().getHostName());
     } catch (UnknownHostException e) {
       throw new RuntimeException(e);
     }

@@ -71,7 +71,7 @@ public class Log4jGelfAppender extends AppenderSkeleton {
   private int failuresToOpen;
   private long secondsToRecover;
 
-  private Map<String, String> externalFields;
+  private Map<String, String> additionalFields;
 
   public Log4jGelfAppender() {
     this.facility = DEFAULT_FACILITY;
@@ -100,7 +100,7 @@ public class Log4jGelfAppender extends AppenderSkeleton {
     // Construct logging information and pass it to logger message converter
     LoggingConfiguration configuration =
         new LoggingConfiguration(facility, logExceptions, logThread, logLine, logFile, logMethod,
-            logClass, logLogger, logMdcValues, logNdc, externalFields);
+            logClass, logLogger, logMdcValues, logNdc, additionalFields);
     payloadTransformer = new Log4j1PayloadTransformer(configuration);
     try {
       payloadTransmitter = createTransmitter(serverPort, soTimeoutMs);
@@ -198,9 +198,18 @@ public class Log4jGelfAppender extends AppenderSkeleton {
     this.logNdc = logNdc;
   }
 
-  public void setExternalFields(String fields) {
-    this.externalFields = deserialize(fields, new TypeLiteral<Map<String, String>>() {
-    });
+  public void setAdditionalFields(String additionalFields) {
+    try {
+      this.additionalFields = deserialize(additionalFields, new TypeLiteral<Map<String, String>>() {
+      });
+    } catch (Exception e) {
+      errorHandler.error(e.getMessage(), e, ErrorCode.GENERIC_FAILURE);
+    }
+    if (this.additionalFields == null) {
+      this.additionalFields = deserialize(additionalFields.replaceAll("'", "\""),
+          new TypeLiteral<Map<String, String>>() {
+          });
+    }
   }
 
   public void setBlocking(boolean blocking) {
